@@ -51,9 +51,73 @@ layout:
     bind: $SNAP/usr/share/weston-calibrator
 parts:
   weston-calibrator:
-    plugin: nil
+    source: https://gitlab.freedesktop.org/wayland/weston.git
+    source-tag: 10.0.5
+    source-depth: 1
+    plugin: meson
+    meson-parameters:
+      - --prefix=/usr
+      - -Dbackend-drm-screencast-vaapi=false
+      - -Dbackend-headless=false
+      - -Dbackend-rdp=false
+      - -Dscreenshare=false
+      - -Dbackend-x11=false
+      - -Dxwayland=false
+      - -Dsystemd=false
+      - -Dremoting=false
+      - -Dpipewire=false
+      - -Dshell-fullscreen=false
+      - -Dshell-ivi=false
+      - -Dshell-kiosk=false
+      - -Dcolor-management-lcms=false
+      - -Dcolor-management-colord=false
+      - -Dlauncher-logind=false
+      - -Dimage-jpeg=false
+      - -Dimage-webp=false
+      - -Dtools=calibrator
+      - -Ddemo-clients=false
+      - -Dsimple-clients=
+      - -Dwcap-decode=false
+      - -Dtest-junit-xml=false
+      - -Dtest-gl-renderer=false
+    build-packages:
+      - meson
+      - cmake
+      - wayland-protocols
+      - libcairo2-dev
+      - libdrm-dev
+      - libegl-dev
+      - libgbm-dev
+      - libgles-dev
+      - libinput-dev
+      - libpango1.0-dev
+      - libwayland-dev
+      - libxkbcommon-dev
     stage-packages:
-      - weston
+      - libcairo2
+      - libdrm2
+      - libegl1-mesa
+      - libevdev2
+      - libgbm1
+      - libgles2
+      - libglvnd0
+      - libgudev-1.0-0
+      - libinput10
+      - libpango-1.0-0
+      - libpangocairo-1.0-0
+      - libwayland-egl1
+      - libwayland-cursor0 
+      - libxkbcommon0
+    override-prime: |
+      craftctl default
+      cd "$CRAFT_PRIME/usr/share/"
+      rm -rf weston libweston*
+      cd "$CRAFT_PRIME/usr/bin/"
+      rm -rf weston weston-screenshooter
+      cd "$CRAFT_PRIME/usr/include/"
+      rm -rf weston libweston*
+      cd "$CRAFT_PRIME/usr/libexec/"
+      rm -rf weston*
 
   # Some utility scripts for setting up the Wayland environment
   setup:
